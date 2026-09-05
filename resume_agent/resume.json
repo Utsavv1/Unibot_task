@@ -1,10 +1,10 @@
 {
   "basics": {
-    "name": "Alex Doe",
+    "name": "Rohan Mehta",
     "title": "Software Engineer",
-    "email": "alex.doe@example.com",
-    "phone": "+1-555-0100",
-    "location": "San Francisco, CA"
+    "email": "rohan.mehta@example.com",
+    "phone": "+91-98765-43210",
+    "location": "Pune, India"
   },
   "summary": "Software engineer with 4 years of experience building web applications. Comfortable with Python and JavaScript. Enjoys working on backend services and shipping features to users.",
   "experiences": [
@@ -12,7 +12,7 @@
       "id": "exp1",
       "role": "Software Engineer",
       "organization": "Acme Corp",
-      "location": "San Francisco, CA",
+      "location": "Pune, India",
       "start_date": "2022-06",
       "end_date": "Present",
       "bullets": [
@@ -38,7 +38,7 @@
       "id": "edu1",
       "degree": "B.S. in Computer Science",
       "institution": "State University",
-      "location": "Berkeley, CA",
+      "location": "Pune, India",
       "start_date": "2016-09",
       "end_date": "2020-05",
       "details": "GPA 3.6/4.0"
