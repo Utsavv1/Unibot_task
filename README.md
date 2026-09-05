@@ -2,10 +2,9 @@
 
 A small multi-agent system, built on the **Google Agent Development Kit (ADK)**,
 that edits a resume (stored as JSON) from natural-language requests. Instead of
-letting an LLM rewrite the resume as free text, every change is applied through
-**tools (functions)** so the JSON always stays schema-valid.
-
----
+letting an LLM rewrite the resume as free text, every change goes through
+**tools (functions)** so the JSON always stays schema-valid — the model never
+gets to hand back arbitrary text and have it treated as the new resume.
 
 ## Agent Hierarchy
 
@@ -30,7 +29,9 @@ Each agent has a **narrow responsibility**, which keeps its prompt tight and
 prevents it from touching unrelated sections. ADK handles the actual
 parent -> sub_agent delegation (LLM-driven transfer), so routing lives in the prompts.
 
----
+I split it into layers mostly to keep each prompt short — one agent trying to
+do intent-detection *and* section-routing *and* editing in a single prompt
+felt like it'd get messy (and hard to debug) fast.
 
 ## How to Run
 
@@ -55,8 +56,6 @@ adk run resume_agent
 
 > Run `adk web` / `adk run` from the **project root** (this folder). ADK
 > discovers the `resume_agent` package, which exposes `root_agent`.
-
----
 
 ## How to Change the Resume
 
@@ -95,8 +94,6 @@ ordinals (`"first"`, `"last"`), 1-based numbers (`"2"`), and — for skills and
 projects — the item's name, so phrasing like *"my first job"* or *"remove
 React"* works.
 
----
-
 ## Tools (Functions)
 
 All edits go through these; agents never emit raw JSON.
@@ -127,8 +124,6 @@ passed, generates non-colliding ids for new items, and returns
 `{status, message, ...}` instead of raising — so a bad reference reports an
 error rather than corrupting the resume.
 
----
-
 ## Sample Test Queries
 
 ```
@@ -146,11 +141,12 @@ Remove my second project
 Add a project about an AI chatbot
 ```
 
----
-
 ## Prompt Design (short)
 
-The prompts are built around four goals the task emphasizes:
+The prompts are built around four goals the task emphasizes. These aren't
+rules I derived from some framework up front — they're mostly what broke
+first when I didn't have them (e.g. a section agent happily "improving" a
+bullet nobody asked it to touch):
 
 - **Clear boundaries.** Each section agent is told it owns *only* its section
   and must never touch others. `disallow_transfer_to_peers=True` stops leaf
@@ -171,8 +167,6 @@ Routing is layered: **Unibot** only decides "resume or not," the **Resume
 sub-agent** only decides "which section," and the **section agent** does the
 actual tool call. This keeps each decision simple and each prompt short.
 
----
-
 ## Project Structure
 
 ```
@@ -190,9 +184,9 @@ unibot_resume/
     └── .env.example           copy to .env, add GOOGLE_API_KEY
 ```
 
----
-
 ## Out of Scope
 
-No auth, database, frontend, deployment, or backend servers — by design. State
-lives in memory, loaded from `resume.json`.
+No auth, database, frontend, deployment, or backend servers — by design. Kept
+that stuff out since it wasn't really the point of the exercise; the
+interesting part here is the multi-agent routing and tool-based editing.
+State lives in memory, loaded from `resume.json`.
