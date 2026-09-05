@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+resume_agent/.env
+.venv/
+venv/
+*.egg-info/

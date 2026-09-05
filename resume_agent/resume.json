@@ -1,0 +1,69 @@
+{
+  "basics": {
+    "name": "Alex Doe",
+    "title": "Software Engineer",
+    "email": "alex.doe@example.com",
+    "phone": "+1-555-0100",
+    "location": "San Francisco, CA"
+  },
+  "summary": "Software engineer with 4 years of experience building web applications. Comfortable with Python and JavaScript. Enjoys working on backend services and shipping features to users.",
+  "experiences": [
+    {
+      "id": "exp1",
+      "role": "Software Engineer",
+      "organization": "Acme Corp",
+      "location": "San Francisco, CA",
+      "start_date": "2022-06",
+      "end_date": "Present",
+      "bullets": [
+        "Built REST APIs in Python serving 10k daily requests.",
+        "Fixed bugs and added features to the customer dashboard."
+      ]
+    },
+    {
+      "id": "exp2",
+      "role": "Junior Developer",
+      "organization": "Startup Inc",
+      "location": "Remote",
+      "start_date": "2020-05",
+      "end_date": "2022-05",
+      "bullets": [
+        "Wrote frontend components in React.",
+        "Assisted senior engineers with code reviews."
+      ]
+    }
+  ],
+  "educations": [
+    {
+      "id": "edu1",
+      "degree": "B.S. in Computer Science",
+      "institution": "State University",
+      "location": "Berkeley, CA",
+      "start_date": "2016-09",
+      "end_date": "2020-05",
+      "details": "GPA 3.6/4.0"
+    }
+  ],
+  "skills": [
+    { "id": "skill1", "name": "Python", "category": "Languages" },
+    { "id": "skill2", "name": "JavaScript", "category": "Languages" },
+    { "id": "skill3", "name": "React", "category": "Frameworks" },
+    { "id": "skill4", "name": "PostgreSQL", "category": "Databases" }
+  ],
+  "projects": [
+    {
+      "id": "proj1",
+      "name": "Personal Portfolio",
+      "description": "A personal website built with React to showcase projects.",
+      "technologies": ["React", "CSS"],
+      "link": "https://example.com"
+    },
+    {
+      "id": "proj2",
+      "name": "Task Tracker",
+      "description": "A CLI task tracker written in Python.",
+      "technologies": ["Python"],
+      "link": ""
+    }
+  ]
+}
