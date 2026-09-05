@@ -5,3 +5,4 @@ resume_agent/.env
 .venv/
 venv/
 *.egg-info/
+.adk/
