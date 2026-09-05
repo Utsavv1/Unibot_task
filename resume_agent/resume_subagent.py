@@ -1,11 +1,7 @@
 """
-resume_subagent.py
--------------------
-The Resume sub-agent sits between Unibot and the five section specialists.
-
-Its ONLY job is to look at a resume-editing request, decide which section it
-targets, and transfer control to the matching section agent. It does not edit
-anything itself.
+Sits between Unibot and the five section specialists. Its only job is to
+look at a resume-editing request, decide which section it targets, and
+transfer control to that section agent — it never edits anything itself.
 """
 
 from google.adk.agents import LlmAgent
@@ -15,6 +11,8 @@ from resume_agent.section_agents import SECTION_AGENTS
 
 MODEL = "gemini-3.6-flash"
 
+# TODO: handle multi-section requests better — right now we just do the
+# section named first and mention the rest (see instruction below)
 resume_agent = LlmAgent(
     name="resume_agent",
     model=MODEL,

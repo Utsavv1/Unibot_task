@@ -1,12 +1,8 @@
 """
-section_agents.py
-------------------
-One specialist agent per resume section. Each agent:
-  - owns ONLY the tools for its section
-  - is told to make the SMALLEST possible edit
-  - must ALWAYS act through a tool, never by describing JSON
-
-These are leaf agents. The Resume sub-agent routes to exactly one of them.
+One specialist agent per resume section — each owns only its own tools, is
+told to make the smallest possible edit, and must always act through a tool
+rather than describing JSON. These are leaf agents; the Resume sub-agent
+routes to exactly one of them.
 """
 
 from google.adk.agents import LlmAgent
@@ -15,7 +11,7 @@ from resume_agent import tools
 
 MODEL = "gemini-3.6-flash"
 
-# Shared rules injected into every section agent so behavior is consistent.
+# kept this as one shared block so tone/rules stay consistent across all five agents
 COMMON_RULES = """
 STRICT RULES (apply to every action):
 - You edit ONLY your own section. Never touch other sections.

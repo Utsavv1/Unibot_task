@@ -1,14 +1,8 @@
 """
-agent.py
----------
-Unibot — the root agent that `adk web` / `adk run` loads.
-
-Unibot is the front door: it greets users, answers general career / Unimad
-questions itself, and detects when a request is about editing the resume. When
-it is, Unibot hands off to the Resume sub-agent, which routes to the right
-section specialist.
-
-ADK requires this module to expose a variable named `root_agent`.
+Unibot — the root agent `adk web` / `adk run` loads. Front door for the app:
+greets users, answers general career/Unimad questions itself, and hands off
+resume-editing requests to the Resume sub-agent (which routes to a section
+specialist). ADK requires this module to expose `root_agent`.
 """
 
 from google.adk.agents import LlmAgent
@@ -19,6 +13,7 @@ from resume_agent.resume_store import load_resume
 # Load the resume once at import time so the state is ready before any request.
 load_resume()
 
+# NOTE: pinned to this model, that's what I tested against
 MODEL = "gemini-3.6-flash"
 
 root_agent = LlmAgent(

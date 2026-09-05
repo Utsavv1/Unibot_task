@@ -1,18 +1,12 @@
 """
-tools.py
----------
-Every resume edit happens through one of these functions. Agents NEVER
-rewrite JSON directly — they call a tool, and the tool performs a small,
-schema-safe mutation on the in-memory resume.
+Every resume edit goes through one of these functions — agents never write
+raw JSON, they call a tool and it does a small, schema-safe mutation on the
+in-memory resume. Each one returns {status, message, ...} so the agent has
+something to report back.
 
-Each tool returns a dict {status, message, ...} so the agent can confirm
-what changed and report back to the user.
-
-Conventions:
-- "ref" arguments accept an id ("exp2"), an ordinal ("first"/"last"),
-  or a 1-based number ("2"). This makes phrasing like "my first job" work.
-- Tools validate inputs and return status="error" instead of raising,
-  so a bad reference never corrupts the resume.
+"ref" args accept an id ("exp2"), an ordinal ("first"/"last"), or a 1-based
+number ("2") — covers phrasing like "my first job". Bad refs come back as
+status="error" instead of raising, so nothing corrupts the resume.
 """
 
 from typing import Optional, List
@@ -28,11 +22,7 @@ def get_resume() -> dict:
 
 
 def get_section(section_name: str) -> dict:
-    """
-    Return one section of the resume.
-    section_name must be one of:
-    summary, experiences, educations, skills, projects, basics.
-    """
+    """One section of the resume (summary/experiences/educations/skills/projects/basics)."""
     state = get_state()
     key = section_name.strip().lower()
     if key not in state:
@@ -46,7 +36,6 @@ def get_section(section_name: str) -> dict:
 # SUMMARY TOOLS
 # =========================================================================
 def update_summary(text: str) -> dict:
-    """Replace the resume summary with new text."""
     state = get_state()
     old = state.get("summary", "")
     state["summary"] = text.strip()
@@ -65,10 +54,7 @@ def update_experience(ref: str,
                       location: Optional[str] = None,
                       start_date: Optional[str] = None,
                       end_date: Optional[str] = None) -> dict:
-    """
-    Update fields on one experience (by id, ordinal, or number).
-    Only the fields you pass are changed; others are left untouched.
-    """
+    """Update one experience (by id/ordinal/number); only passed fields change."""
     exps = get_state()["experiences"]
     idx, exp = resolve_index(exps, ref)
     if exp is None:
@@ -109,7 +95,7 @@ def add_experience_bullet(ref: str, bullet: str,
 
 
 def update_experience_bullet(ref: str, bullet_index: int, new_text: str) -> dict:
-    """Replace one bullet (0-based bullet_index) on an experience."""
+    """bullet_index is 0-based."""
     exps = get_state()["experiences"]
     idx, exp = resolve_index(exps, ref)
     if exp is None:
@@ -127,7 +113,6 @@ def update_experience_bullet(ref: str, bullet_index: int, new_text: str) -> dict
 
 
 def remove_experience_bullet(ref: str, bullet_index: int) -> dict:
-    """Remove one bullet (0-based bullet_index) from an experience."""
     exps = get_state()["experiences"]
     idx, exp = resolve_index(exps, ref)
     if exp is None:
@@ -145,7 +130,6 @@ def remove_experience_bullet(ref: str, bullet_index: int) -> dict:
 def add_experience(role: str, organization: str,
                    start_date: str = "", end_date: str = "",
                    location: str = "", bullets: Optional[List[str]] = None) -> dict:
-    """Add a whole new experience entry to the resume."""
     exps = get_state()["experiences"]
     new = {
         "id": next_id("exp", exps),
@@ -181,7 +165,7 @@ def update_education(ref: str,
                      start_date: Optional[str] = None,
                      end_date: Optional[str] = None,
                      details: Optional[str] = None) -> dict:
-    """Update fields on one education entry. Only passed fields change."""
+    """Only passed fields change."""
     edus = get_state()["educations"]
     idx, edu = resolve_index(edus, ref)
     if edu is None:
@@ -202,7 +186,6 @@ def update_education(ref: str,
 def add_education(degree: str, institution: str,
                   start_date: str = "", end_date: str = "",
                   location: str = "", details: str = "") -> dict:
-    """Add a new education entry."""
     edus = get_state()["educations"]
     new = {
         "id": next_id("edu", edus),
@@ -242,12 +225,13 @@ def add_skill(name: str, category: str = "Other") -> dict:
 
 
 def remove_skill(ref: str) -> dict:
-    """
-    Remove a skill by id, number, or by its name (e.g. "Python").
-    """
+    """Remove a skill by id, number, or name (e.g. "Python")."""
     skills = get_state()["skills"]
     idx, skill = resolve_index(skills, ref)
-    if skill is None:  # fall back to name match
+    # NOTE: falls back to a case-insensitive name match if ref isn't an id/ordinal/number
+    # TODO: this fallback is duplicated in update_skill_category/remove_project below —
+    # could factor out if a third section needs the same lookup
+    if skill is None:
         for i, s in enumerate(skills):
             if s["name"].strip().lower() == str(ref).strip().lower():
                 idx, skill = i, s
@@ -259,7 +243,7 @@ def remove_skill(ref: str) -> dict:
 
 
 def update_skill_category(ref: str, category: str) -> dict:
-    """Change the category of a skill (by id, number, or name)."""
+    """By id, number, or name."""
     skills = get_state()["skills"]
     idx, skill = resolve_index(skills, ref)
     if skill is None:
@@ -283,7 +267,7 @@ def update_project(ref: str,
                    description: Optional[str] = None,
                    technologies: Optional[List[str]] = None,
                    link: Optional[str] = None) -> dict:
-    """Update fields on one project. Only passed fields change."""
+    """Only passed fields change."""
     projs = get_state()["projects"]
     idx, proj = resolve_index(projs, ref)
     if proj is None:
@@ -303,7 +287,6 @@ def update_project(ref: str,
 def add_project(name: str, description: str = "",
                 technologies: Optional[List[str]] = None,
                 link: str = "") -> dict:
-    """Add a new project entry."""
     projs = get_state()["projects"]
     new = {
         "id": next_id("proj", projs),

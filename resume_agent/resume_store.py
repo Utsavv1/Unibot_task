@@ -1,13 +1,9 @@
 """
-resume_store.py
-----------------
-Single source of truth for the resume state.
-
-The resume is loaded ONCE from resume.json (see RESUME_PATH below) into an
-in-memory dict. All tools read and write through this module, so the schema
+Single source of truth for the resume state. Loaded once from resume.json
+into an in-memory dict; every tool reads/writes through here so the schema
 stays consistent no matter what the LLM does.
 
->>> To use a different resume, simply replace resume.json in this folder. <<<
+To use a different resume, just replace resume.json in this folder.
 """
 
 import json
@@ -15,7 +11,7 @@ import os
 from typing import Any, Dict
 
 # ---- The ONE place the resume comes from --------------------------------
-RESUME_PATH = os.path.join(os.path.dirname(__file__), "resume.json")
+RESUME_JSON_PATH = os.path.join(os.path.dirname(__file__), "resume.json")
 
 _RESUME: Dict[str, Any] = {}
 
@@ -23,7 +19,7 @@ _RESUME: Dict[str, Any] = {}
 def load_resume() -> Dict[str, Any]:
     """Load resume.json from disk into the in-memory store."""
     global _RESUME
-    with open(RESUME_PATH, "r", encoding="utf-8") as f:
+    with open(RESUME_JSON_PATH, "r", encoding="utf-8") as f:
         _RESUME = json.load(f)
     return _RESUME
 
@@ -46,7 +42,6 @@ def next_id(prefix: str, items: list) -> str:
 
 
 def find_by_id(items: list, item_id: str):
-    """Return (index, item) for a given id, or (None, None) if not found."""
     for idx, item in enumerate(items):
         if item.get("id") == item_id:
             return idx, item
@@ -55,18 +50,14 @@ def find_by_id(items: list, item_id: str):
 
 def resolve_index(items: list, ref: str):
     """
-    Resolve a section item from a flexible reference string.
-
-    Accepts:
-      - an exact id           -> "exp2"
-      - an ordinal word       -> "first", "second", "last"
-      - a 1-based number       -> "1", "2"
-    Returns (index, item) or (None, None).
+    Resolve an item from a flexible reference: exact id ("exp2"), ordinal
+    word ("first"/"second"/"last"), or 1-based number ("1"/"2").
     """
     if ref is None:
         return None, None
     ref = str(ref).strip().lower()
 
+    # NOTE: ordinal parsing is basic, only covers first-fifth
     ordinals = {
         "first": 0, "1st": 0,
         "second": 1, "2nd": 1,
