@@ -230,7 +230,7 @@ def remove_skill(ref: str) -> dict:
     idx, skill = resolve_index(skills, ref)
     # NOTE: falls back to a case-insensitive name match if ref isn't an id/ordinal/number
     # TODO: this fallback is duplicated in update_skill_category/remove_project below —
-    # could factor out if a third section needs the same lookup
+    # could factor this out if another section needs the same lookup
     if skill is None:
         for i, s in enumerate(skills):
             if s["name"].strip().lower() == str(ref).strip().lower():
